@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# No sitemap is published here: add one once the final domain is known, e.g.
+# Sitemap: https://example.com/sitemap.xml

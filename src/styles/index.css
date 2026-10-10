@@ -1,0 +1,1154 @@
+﻿@import 'tailwindcss';
+
+/* ============================================================================
+   ONEIRIA â€” design system
+   Brand tokens first, then base, then components. Everything below is plain
+   CSS on top of Tailwind's utility layer; component classes live in @layer
+   components so utilities can still override them.
+   ========================================================================= */
+
+@theme {
+  /* Brand palette (from the supplied identity boards) */
+  --color-space: #101a36; /* Deep Space Navy   */
+  --color-dream: #8751e9; /* Luminous Dream Purple */
+  --color-nebula: #6158f5; /* Vibrant Nebula Blue   */
+  --color-astral: #f6f5f2; /* Astral White          */
+  --color-meteor: #6a6d75; /* Meteor Gray — darkened from #85878e so 11–15px
+                             text clears WCAG AA (4.5:1) on white and astral */
+  --color-white: #ffffff;
+
+  /* Derived neutrals */
+  --color-ink: #0a1024;
+  --color-space-soft: #1a2547;
+  --color-space-line: rgba(246, 245, 242, 0.14);
+  --color-astral-line: rgba(16, 26, 54, 0.14);
+  --color-dream-soft: #a585f0;
+  --color-nebula-soft: #8a82f8;
+
+  /* Type */
+  --font-display: 'Poppins', 'Cairo', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', 'Cairo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, monospace;
+
+  /* Fluid type scale */
+  --step--2: clamp(0.7rem, 0.68rem + 0.1vw, 0.76rem);
+  --step--1: clamp(0.82rem, 0.79rem + 0.16vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
+  --step-1: clamp(1.15rem, 1.08rem + 0.35vw, 1.35rem);
+  --step-2: clamp(1.35rem, 1.2rem + 0.7vw, 1.75rem);
+  --step-3: clamp(1.6rem, 1.35rem + 1.2vw, 2.35rem);
+  --step-4: clamp(1.95rem, 1.5rem + 2.1vw, 3.3rem);
+  --step-5: clamp(2.4rem, 1.6rem + 3.6vw, 4.6rem);
+  --step-6: clamp(2.9rem, 1.6rem + 5.6vw, 6.4rem);
+
+  /* Rhythm */
+  --gutter: clamp(1.15rem, 0.6rem + 2.4vw, 3.5rem);
+  --section-y: clamp(4.5rem, 2.6rem + 8vw, 9.5rem);
+  --shell: 78rem;
+
+  --ease-out: cubic-bezier(0.22, 0.68, 0.32, 1);
+  --dur: 480ms;
+}
+
+/* Arabic swaps the whole stack so headings keep the same rhythm. */
+html[dir='rtl'] {
+  --font-display: 'Cairo', 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Cairo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ base -
+   Element resets live in the `base` layer (declared by Tailwind's import) so
+   that component classes â€” which sit in the `components` layer â€” are still able
+   to override them. Anything left unlayered would beat every layered rule
+   regardless of specificity. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-astral-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-astral);
+    color: var(--color-space);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  html.nav-locked,
+  html.nav-locked body {
+    overflow: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  /* Arabic needs looser leading and no letter-spacing. It sits in `base` so
+     component typography (e.g. `html[dir='rtl'] .hero__title`) can still win. */
+  html[dir='rtl'] h1,
+  html[dir='rtl'] h2,
+  html[dir='rtl'] h3,
+  html[dir='rtl'] h4 {
+    letter-spacing: 0;
+    line-height: 1.24;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+::selection {
+  background: var(--color-dream);
+  color: #fff;
+}
+
+/* Visible, consistent focus everywhere. Left unlayered on purpose so a focus
+   ring can never be overridden by a component class or a utility. */
+:focus-visible {
+  outline: 2px solid var(--color-dream);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.on-dark :focus-visible {
+  outline-color: var(--color-nebula-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------- utilities - */
+@layer components {
+  .shell {
+    width: min(100% - (var(--gutter) * 2), var(--shell));
+    margin-inline: auto;
+  }
+
+  .shell-wide {
+    width: min(100% - (var(--gutter) * 2), 92rem);
+    margin-inline: auto;
+  }
+
+  .section {
+    padding-block: var(--section-y);
+    position: relative;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--color-meteor);
+    font-weight: 500;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.65;
+  }
+
+  .on-dark .eyebrow {
+    color: var(--color-dream-soft);
+  }
+
+  .display {
+    font-size: var(--step-5);
+  }
+
+  .h2 {
+    font-size: var(--step-4);
+  }
+
+  .h3 {
+    font-size: var(--step-2);
+  }
+
+  .lede {
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--color-space) 74%, transparent);
+  }
+
+  .on-dark .lede {
+    color: color-mix(in srgb, var(--color-astral) 76%, transparent);
+  }
+
+  .muted {
+    color: var(--color-meteor);
+  }
+
+  .index-no {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.18em;
+    color: var(--color-meteor);
+  }
+
+  .on-dark .index-no {
+    color: color-mix(in srgb, var(--color-astral) 66%, transparent);
+  }
+
+  /* ---------------------------------------------------------- buttons -- */
+  .btn {
+    --btn-bg: var(--color-space);
+    --btn-fg: var(--color-astral);
+    --btn-bd: var(--color-space);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    padding: 0.95rem 1.6rem;
+    border: 1px solid var(--btn-bd);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    border-radius: 999px;
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform var(--dur) var(--ease-out),
+      background-color var(--dur) var(--ease-out),
+      color var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg, var(--color-dream), var(--color-nebula));
+    transform: translateY(101%);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .btn:hover {
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  .btn:hover::after {
+    transform: translateY(0);
+  }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-ghost {
+    --btn-bg: transparent;
+    --btn-fg: var(--color-space);
+    --btn-bd: color-mix(in srgb, var(--color-space) 26%, transparent);
+  }
+
+  /* Contexts that use light-on-dark text. The drawer and the tinted header are
+     dark surfaces too, even though they are not descendants of `.on-dark`. */
+  :is(.on-dark, .nav-drawer, .site-header[data-tinted='true']) .btn-ghost {
+    --btn-fg: var(--color-astral);
+    --btn-bd: color-mix(in srgb, var(--color-astral) 34%, transparent);
+  }
+
+  .btn-solid {
+    --btn-bg: var(--color-space);
+    --btn-fg: var(--color-astral);
+    --btn-bd: var(--color-space);
+  }
+
+  :is(.on-dark, .nav-drawer, .site-header[data-tinted='true']) .btn-solid {
+    --btn-bg: var(--color-astral);
+    --btn-fg: var(--color-space);
+    --btn-bd: var(--color-astral);
+  }
+
+  /* --------------------------------------------------------- link arrow - */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: var(--step--1);
+    padding-block-end: 0.2rem;
+    border-block-end: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+    transition: gap var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+  }
+
+  .link-arrow:hover {
+    gap: 0.9rem;
+    border-color: currentColor;
+  }
+
+  /* ------------------------------------------------------------- card --- */
+  .card {
+    background: var(--color-white);
+    border: 1px solid var(--color-astral-line);
+    border-radius: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-dream) 45%, transparent);
+    box-shadow: 0 1.5rem 3rem -1.75rem rgba(16, 26, 54, 0.45);
+  }
+
+  .card-flat:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: color-mix(in srgb, var(--color-dream) 45%, transparent);
+  }
+
+  /* --------------------------------------------------------- form bits -- */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .field > label {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-meteor);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: var(--step-0);
+    color: var(--color-space);
+    background: var(--color-white);
+    border: 1px solid color-mix(in srgb, var(--color-space) 20%, transparent);
+    border-radius: 0.7rem;
+    padding: 0.85rem 1rem;
+    transition: border-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+  }
+
+  .field textarea {
+    min-height: 9rem;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--color-dream);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-dream) 24%, transparent);
+  }
+
+  .field [aria-invalid='true'] {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.16);
+  }
+
+  .field-error {
+    font-size: var(--step--1);
+    color: #a5281b;
+  }
+
+  /* Visually hidden but available to assistive tech. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    z-index: 100;
+    background: var(--color-space);
+    color: var(--color-astral);
+    padding: 0.7rem 1.1rem;
+    border-radius: 0.5rem;
+    font-size: var(--step--1);
+    transform: translateY(-160%);
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+}
+
+/* Everything below is component styling. Keeping it inside `components` means
+   Tailwind utilities can still override it, and that the small unlayered rules
+   above (::selection, :focus-visible) remain the only things that always win. */
+@layer components {
+
+/* ------------------------------------------------------------- reveal ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 700ms var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .reveal[data-dir='left'] {
+    transform: translate3d(-2.25rem, 0, 0);
+  }
+
+  .reveal[data-dir='right'] {
+    transform: translate3d(2.25rem, 0, 0);
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------- marquee ------ */
+.marquee {
+  --marquee-gap: clamp(1.5rem, 4vw, 3.5rem);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  gap: var(--marquee-gap);
+  animation: marquee 38s linear infinite;
+}
+
+.marquee--reverse .marquee__track {
+  animation-direction: reverse;
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* RTL/LTR safe: the track is mirrored by the parent dir attribute. */
+    transform: translate3d(calc(-1 * (100% + var(--marquee-gap))), 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
+
+/* -------------------------------------------------------- aperture mark -- */
+.aperture-spin {
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aperture-spin {
+    animation: aperture-spin 44s linear infinite;
+  }
+
+  .aperture-spin--rev {
+    animation-direction: reverse;
+    animation-duration: 60s;
+  }
+}
+
+@keyframes aperture-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ----------------------------------------------------------- site nav ---- */
+.site-header {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 60;
+  transition:
+    background-color 400ms var(--ease-out),
+    backdrop-filter 400ms var(--ease-out),
+    border-color 400ms var(--ease-out),
+    transform 400ms var(--ease-out);
+  border-block-end: 1px solid transparent;
+}
+
+.site-header[data-stuck='true'] {
+  background: color-mix(in srgb, var(--color-astral) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-block-end-color: var(--color-astral-line);
+}
+
+.site-header[data-tinted='true'] {
+  color: var(--color-astral);
+}
+
+.site-header[data-tinted='true'][data-stuck='true'] {
+  color: var(--color-space);
+}
+
+.nav-link {
+  position: relative;
+  font-size: var(--step--1);
+  font-weight: 500;
+  padding-block: 0.35rem;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 380ms var(--ease-out);
+}
+
+.nav-link:hover::after,
+.nav-link[aria-current='true']::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.lang-switch {
+  /* The selected pill inverts, so both colours must be declared together —
+     deriving the label from `currentColor` produces light-on-light whenever the
+     surrounding text is light (hero, footer, drawer). */
+  --lang-pill-bg: var(--color-space);
+  --lang-pill-fg: var(--color-astral);
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.16rem;
+  gap: 0.1rem;
+  opacity: 0.85;
+}
+
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  line-height: 1;
+  transition: background-color 260ms var(--ease-out), color 260ms var(--ease-out);
+}
+
+.lang-switch button[aria-pressed='true'] {
+  background: var(--lang-pill-bg);
+}
+
+.lang-switch button[aria-pressed='true'] span {
+  color: var(--lang-pill-fg);
+}
+
+/* Contexts where the surrounding text is light need the inverted pair. */
+:is(.on-dark, .nav-drawer, .site-header[data-tinted='true']) .lang-switch {
+  --lang-pill-bg: var(--color-astral);
+  --lang-pill-fg: var(--color-space);
+}
+
+/* Mobile drawer.
+   Two things matter here beyond looks:
+   1. `visibility` is toggled with a delayed transition so the closed drawer can
+      never be seen, focused or reached with the keyboard â€” even if its content
+      is taller than the viewport and would otherwise spill out of the box.
+   2. `overflow-y: auto` + `minmax(0, 1fr)` mean short viewports scroll the menu
+      instead of pushing rows past the edge. */
+.nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: var(--color-space);
+  color: var(--color-astral);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: var(--gutter);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition:
+    transform 520ms var(--ease-out),
+    visibility 0s linear 520ms;
+}
+
+.nav-drawer[data-open='true'] {
+  transform: translateY(0);
+  visibility: visible;
+  transition:
+    transform 520ms var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.nav-drawer > nav {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (min-width: 60rem) {
+  .nav-drawer {
+    display: none;
+  }
+}
+
+.drawer-link {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 7vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  padding-block: 0.45rem;
+  border-block-end: 1px solid var(--color-space-line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.drawer-link span {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  color: var(--color-dream-soft);
+  letter-spacing: 0.2em;
+}
+
+/* --------------------------------------------------------------- hero ---- */
+.hero {
+  position: relative;
+  min-height: min(100svh, 58rem);
+  display: grid;
+  align-items: end;
+  padding-block: clamp(7rem, 14vh, 11rem) clamp(3rem, 7vh, 5rem);
+  background: var(--color-space);
+  color: var(--color-astral);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(16, 26, 54, 0.86) 0%, rgba(16, 26, 54, 0.5) 38%, rgba(16, 26, 54, 0.94) 100%),
+    radial-gradient(65% 55% at 78% 22%, rgba(135, 81, 233, 0.42), transparent 70%);
+}
+
+.hero__glow {
+  position: absolute;
+  inset-block-start: -18%;
+  inset-inline-end: -12%;
+  width: min(58rem, 85vw);
+  aspect-ratio: 1;
+  z-index: -1;
+  background: radial-gradient(circle, rgba(97, 88, 245, 0.5), transparent 62%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.hero__title {
+  font-size: var(--step-6);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+}
+
+html[dir='rtl'] .hero__title {
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
+.hero__title em {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--color-dream-soft), var(--color-nebula-soft) 55%, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ----------------------------------------------------------- statements -- */
+.statement {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  max-width: 22ch;
+}
+
+html[dir='rtl'] .statement {
+  letter-spacing: 0;
+  line-height: 1.35;
+  max-width: 26ch;
+}
+
+/* ------------------------------------------------------------ services --- */
+.svc {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  padding-block: clamp(1.75rem, 3vw, 2.75rem);
+  border-block-start: 1px solid var(--color-astral-line);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .svc {
+    grid-template-columns: 4rem 1.1fr 1.4fr;
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+}
+
+.svc:last-child {
+  border-block-end: 1px solid var(--color-astral-line);
+}
+
+.svc__title {
+  font-size: var(--step-3);
+  transition: color 360ms var(--ease-out);
+}
+
+.svc:hover .svc__title {
+  color: var(--color-dream);
+}
+
+.svc__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.svc__list li {
+  font-size: var(--step--1);
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--color-astral-line);
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--color-space) 78%, transparent);
+  background: var(--color-white);
+}
+
+/* --------------------------------------------------------------- work ---- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  cursor: pointer;
+  font-size: var(--step--1);
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-astral-line);
+  background: transparent;
+  transition:
+    background-color 300ms var(--ease-out),
+    color 300ms var(--ease-out),
+    border-color 300ms var(--ease-out);
+}
+
+.filter-btn:hover {
+  border-color: color-mix(in srgb, var(--color-dream) 55%, transparent);
+}
+
+.filter-btn[aria-pressed='true'] {
+  background: var(--color-space);
+  border-color: var(--color-space);
+  color: var(--color-astral);
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-align: start;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  width: 100%;
+}
+
+.work-card__frame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: var(--color-space);
+}
+
+.work-card__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-out), filter 600ms var(--ease-out);
+}
+
+.work-card:hover .work-card__frame img,
+.work-card:focus-visible .work-card__frame img {
+  transform: scale(1.055);
+}
+
+.work-card__open {
+  position: absolute;
+  inset-block-end: 0.85rem;
+  inset-inline-end: 0.85rem;
+  background: var(--color-astral);
+  color: var(--color-space);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  font-size: var(--step--2);
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(140%);
+  transition: transform 480ms var(--ease-out);
+}
+
+.work-card:hover .work-card__open,
+.work-card:focus-visible .work-card__open {
+  transform: translateY(0);
+}
+
+.badge {
+  position: absolute;
+  inset-block-start: 0.85rem;
+  inset-inline-start: 0.85rem;
+  background: color-mix(in srgb, var(--color-space) 82%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--color-astral);
+  border: 1px solid var(--color-space-line);
+  border-radius: 999px;
+  padding: 0.32rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- modal -- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(10, 16, 36, 0.72);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: clamp(0.75rem, 3vw, 2.5rem);
+  animation: fade-in 300ms var(--ease-out);
+}
+
+.modal-panel {
+  background: var(--color-astral);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  width: min(100%, 58rem);
+  max-height: min(92svh, 60rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 3rem 6rem -2rem rgba(10, 16, 36, 0.7);
+  animation: panel-in 420ms var(--ease-out);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2rem, 0) scale(0.985);
+  }
+}
+
+/* ------------------------------------------------------------- process --- */
+.step {
+  position: relative;
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  border-radius: 1.15rem;
+  border: 1px solid var(--color-space-line);
+  background: linear-gradient(180deg, rgba(246, 245, 242, 0.07), rgba(246, 245, 242, 0.02));
+  overflow: hidden;
+}
+
+.step__no {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(140deg, var(--color-dream-soft), var(--color-nebula-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ------------------------------------------------------------------ faq -- */
+.faq-item {
+  border-block-end: 1px solid var(--color-astral-line);
+}
+
+.faq-item:first-child {
+  border-block-start: 1px solid var(--color-astral-line);
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: start;
+  padding-block: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  transition: color 300ms var(--ease-out);
+}
+
+html[dir='rtl'] .faq-q {
+  letter-spacing: 0;
+}
+
+.faq-q:hover {
+  color: var(--color-dream);
+}
+
+.faq-icon {
+  flex: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  display: grid;
+  place-items: center;
+  position: relative;
+  opacity: 0.6;
+  transition: transform 420ms var(--ease-out), opacity 420ms var(--ease-out);
+}
+
+.faq-icon::before,
+.faq-icon::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.faq-icon::before {
+  inline-size: 0.75rem;
+  block-size: 1.5px;
+}
+
+.faq-icon::after {
+  inline-size: 1.5px;
+  block-size: 0.75rem;
+  transition: transform 420ms var(--ease-out), opacity 300ms var(--ease-out);
+}
+
+.faq-q[aria-expanded='true'] .faq-icon {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.faq-q[aria-expanded='true'] .faq-icon::after {
+  transform: scaleY(0);
+  opacity: 0;
+}
+
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 460ms var(--ease-out);
+}
+
+.faq-a[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+.faq-a > div {
+  overflow: hidden;
+}
+
+.faq-a p {
+  padding-block-end: clamp(1.15rem, 2.4vw, 1.6rem);
+  max-width: 62ch;
+  color: color-mix(in srgb, var(--color-space) 74%, transparent);
+}
+
+/* -------------------------------------------------------------- contact -- */
+.notice {
+  border-radius: 0.9rem;
+  padding: 1rem 1.15rem;
+  font-size: var(--step--1);
+  line-height: 1.55;
+  border: 1px solid;
+}
+
+.notice--info {
+  background: color-mix(in srgb, var(--color-nebula) 10%, var(--color-white));
+  border-color: color-mix(in srgb, var(--color-nebula) 34%, transparent);
+  color: color-mix(in srgb, var(--color-space) 88%, var(--color-nebula));
+}
+
+.notice--ok {
+  background: color-mix(in srgb, #1f9d61 12%, var(--color-white));
+  border-color: color-mix(in srgb, #1f9d61 40%, transparent);
+  color: #10613c;
+}
+
+.notice--bad {
+  background: color-mix(in srgb, #c0392b 10%, var(--color-white));
+  border-color: color-mix(in srgb, #c0392b 38%, transparent);
+  color: #8d2317;
+}
+
+/* honeypot: hidden from people, present for bots */
+.hp {
+  position: absolute;
+  inset-inline-start: -9999px;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- footer -- */
+.site-footer {
+  background: var(--color-space);
+  color: var(--color-astral);
+  padding-block: clamp(3.5rem, 7vw, 6rem) 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-link {
+  font-size: var(--step--1);
+  color: color-mix(in srgb, var(--color-astral) 72%, transparent);
+  transition: color 260ms var(--ease-out);
+}
+
+.footer-link:hover {
+  color: var(--color-astral);
+}
+
+.footer-rule {
+  border: 0;
+  border-block-start: 1px solid var(--color-space-line);
+  margin-block: clamp(2rem, 5vw, 3.25rem) 1.5rem;
+}
+
+}

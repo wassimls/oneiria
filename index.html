@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!--
+      Content Security Policy.
+      Deliberately strict: no third-party scripts, no remote fonts, no plugins.
+      If you connect the contact form to an EXTERNAL provider (Formspree, Basin, your own
+      API...), add that origin to `connect-src` here AND in public/_headers.
+      See README.md -> "Security".
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; manifest-src 'self'"
+    />
+    <!-- `frame-ancestors` is deliberately NOT in the meta tag above: browsers
+         ignore it there and log a console error. It is delivered properly by the
+         `Content-Security-Policy` header in public/_headers. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <title>Oneiria — Ideas into Worlds | Marketing &amp; Content Studio</title>
+    <meta
+      name="description"
+      content="Oneiria is a marketing agency and content creation studio. Strategy, brand identity, film production, campaigns and social content systems — ideas turned into worlds."
+    />
+    <meta name="theme-color" content="#101A36" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="stylesheet" href="fonts/fonts.css" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Oneiria" />
+    <meta property="og:title" content="Oneiria — Ideas into Worlds" />
+    <meta
+      property="og:description"
+      content="Marketing agency and content creation studio. Strategy, film, design and campaigns."
+    />
+    <meta property="og:image" content="images/hero-filmset.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Oneiria — Ideas into Worlds" />
+    <meta
+      name="twitter:description"
+      content="Marketing agency and content creation studio. Strategy, film, design and campaigns."
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Oneiria",
+        "slogan": "Ideas into Worlds",
+        "description": "Marketing agency and content creation studio offering brand strategy, identity design, advertising campaigns, film production and social content systems.",
+        "knowsLanguage": ["en", "ar"]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="font-family: system-ui, sans-serif; padding: 2rem; max-width: 40rem; margin: 0 auto">
+        <h1>Oneiria — Ideas into Worlds</h1>
+        <p>
+          This site needs JavaScript to run. Please enable it, or contact the Oneiria team through
+          your usual channel.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="src/main.jsx"></script>
+  </body>
+</html>

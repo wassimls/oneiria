@@ -1,0 +1,23 @@
+{
+  "name": "Oneiria",
+  "short_name": "Oneiria",
+  "description": "Marketing agency and content creation studio — Ideas into Worlds.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101A36",
+  "theme_color": "#101A36",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
